@@ -1,0 +1,103 @@
+---
+title: Gateway Overview
+description: What the customer gateway is, why it exists, and what Atlas expects from it.
+---
+
+## What the gateway is
+
+The gateway is the customer-owned bridge between Atlas and the customer’s private systems.
+
+Its job is simple:
+
+- expose actions
+- keep secrets and business logic on the customer side
+- translate Atlas requests into whatever internal systems the customer already uses
+
+## Why Atlas uses a gateway
+
+Without a gateway, Atlas would need direct access to customer secrets and internal systems.
+
+That is the wrong boundary.
+
+The gateway keeps the contract clean:
+
+- Atlas asks for a capability
+- the gateway decides how to execute it
+- the customer keeps control
+
+## What can sit behind the gateway
+
+- internal REST APIs
+- webhooks
+- workflow engines
+- internal agents
+- MCP servers
+- OpenClaw-style capability layers
+- data stores and search layers
+
+## What Atlas actually sees
+
+Atlas does not need to know what runtime is behind the gateway.
+
+It only sees:
+
+- a manifest
+- an invoke endpoint
+- job resources
+- optional callbacks
+
+## One workspace gateway
+
+Today, the clean model is one gateway per workspace.
+
+That gateway can expose many actions. Atlas agents then get different subsets of those actions.
+
+## What belongs behind the gateway
+
+You can put almost anything behind this boundary:
+
+- internal REST APIs
+- internal search or document systems
+- workflow engines
+- internal agents
+- OpenClaw-like capability layers
+- MCP-backed tooling
+
+Atlas does not need to know the implementation details. It only needs a clean action contract.
+
+## Good action design
+
+Keep actions task-shaped.
+
+Good:
+
+- `fetch_internal_context`
+- `trigger_followup_workflow`
+- `lookup_candidate_packet`
+- `query_research_agent`
+
+Less useful:
+
+- raw model completion endpoints
+- thin wrappers around low-level internal APIs with no clear task boundary
+
+## The v1 contract
+
+Gateway Contract v1 is built around:
+
+- `GET /v1/manifest`
+- `POST /v1/invoke`
+- `GET /v1/jobs/{jobId}`
+- `POST /v1/jobs/{jobId}/cancel`
+
+Optional:
+
+- async callbacks
+- approval flows
+
+## What the gateway is not
+
+Gateway actions are not Atlas skills.
+
+- Atlas skills live on the Atlas side and shape behavior
+- gateway actions live on the customer side and perform work

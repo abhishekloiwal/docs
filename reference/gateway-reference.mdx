@@ -1,0 +1,30 @@
+---
+title: Gateway API Reference
+description: The machine-readable Gateway Contract v1 surface exposed to hosted Atlas.
+---
+
+This section is the exact API surface Atlas uses when it talks to your gateway.
+
+Use the guide pages for implementation advice, rollout order, and design rules.
+
+Use this reference section for:
+
+- request and response shapes
+- auth expectations
+- endpoint-by-endpoint examples
+- exact field names
+
+## Endpoints in v1
+
+- `GET /v1/manifest`
+- `POST /v1/invoke`
+- `GET /v1/jobs/{jobId}`
+- `POST /v1/jobs/{jobId}/cancel`
+
+This reference matches the current hosted Atlas contract:
+
+- one workspace gateway
+- manifest-driven action discovery
+- one action per invoke request
+- optional async jobs
+- optional approval flow

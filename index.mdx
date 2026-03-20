@@ -1,97 +1,62 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Hosted Atlas"
+description: "Use hosted Atlas with your own agents, skills, and customer-owned gateway."
 ---
 
-## Setting up
+## What Atlas owns
 
-Get your documentation site up and running in minutes.
+Atlas runs the meeting runtime for you.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+That includes:
 
-## Make it yours
+- room and media behavior
+- live voice behavior
+- backend task orchestration
+- screen inspection
+- canvas updates
+- agent, skill, and gateway configuration
 
-Design a docs site that looks great and empowers your users.
+## What you own
+
+You keep your private systems on your side.
+
+The main boundary is your gateway.
 
 <Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+  <Card title="Atlas side">
+    Agents, skills, room runtime, live voice behavior, task orchestration, and dashboard configuration.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Customer side">
+    Your gateway, your internal tools, your workflows, your internal agents, and your downstream secrets.
   </Card>
 </Columns>
 
-## Create beautiful pages
+## The product model
 
-Everything you need to create world-class documentation.
+The product is simple:
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+- one workspace gateway
+- many Atlas agents
+- many Atlas skills
+- each agent gets a subset of gateway actions plus a set of attached skills
 
-## Need inspiration?
+An Atlas agent is the thing that joins meetings.
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+A skill is a reusable markdown instruction pack Atlas can load when needed.
+
+A gateway action is a customer-owned tool Atlas can call.
+
+## Recommended setup order
+
+1. Connect your gateway in the dashboard.
+2. Create one or two workspace skills.
+3. Attach those skills to an agent.
+4. Limit that agent to the smallest useful action set.
+5. Test in a real meeting.
+
+## Where to go next
+
+- Start with [Dashboard Setup](/atlas/dashboard-setup)
+- Then read [Agents And Skills](/atlas/agents-and-skills)
+- Then read [Gateway Overview](/gateway/overview)
+- If you want to scaffold the gateway with an internal coding agent, use [Build With An Agent](/gateway/build-with-an-agent)

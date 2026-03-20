@@ -1,0 +1,83 @@
+---
+title: "Dashboard Setup"
+description: "Set up the hosted Atlas workspace: gateway, skills, and agents."
+---
+
+## The three dashboard surfaces
+
+The setup flow is split across three pages.
+
+### Gateway
+
+Use the `Gateway` page to register the workspace gateway.
+
+Atlas stores:
+
+- manifest URL
+- invoke URL
+- auth settings
+- validation status
+- a cached manifest snapshot for UI and debugging
+
+### Skills
+
+Use the `Skills` page to create or edit reusable skill markdown.
+
+Skills live on the Atlas side. They are not part of the customer gateway.
+
+### Agents
+
+Use the `Agents` page to configure the meeting agents your workspace will use.
+
+Each agent controls:
+
+- base realtime prompt
+- base brain prompt
+- attached skills
+- allowed gateway actions
+
+## Recommended setup order
+
+Start in this order:
+
+1. connect the workspace gateway
+2. validate one read-only action
+3. create one or two skills
+4. attach them to the default agent
+5. trim gateway access down to the actions that agent should actually use
+6. test in a real meeting
+
+## What happens at runtime
+
+When a meeting starts, the worker loads:
+
+- the workspace gateway config
+- the selected agent config
+- the agent's attached skill metadata
+- the filtered gateway action set for that agent
+
+So the dashboard is not just an admin UI. It is the source of truth for the hosted worker.
+
+## Hosted canary setup
+
+If you are testing Atlas with a hosted worker, the gateway must be reachable from the public internet or private ingress you control.
+
+For a quick canary, it is fine to:
+
+1. run the mock or reference gateway locally
+2. expose it through a public HTTPS tunnel such as ngrok
+3. save the tunneled manifest and invoke URLs in the dashboard
+4. run the sync / async / approval checks from the dashboard first
+5. then join a real meeting and test the same flows in-room
+
+If your manifest or invoke URL is only `localhost`, `127.0.0.1`, or another private-network address, a hosted worker will not be able to reach it.
+
+## First test
+
+Start with one read-only action.
+
+That keeps the first validation simple and makes it easy to inspect the exact request and response shape before you add side effects.
+
+<Tip>
+If you want to validate the contract before wiring real systems, start with the [Mock Gateway](/gateway/mock-gateway) shape and mirror it closely.
+</Tip>

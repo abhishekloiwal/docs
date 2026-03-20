@@ -1,122 +1,75 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
-  "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+  "name": "Atlas Docs",
+  "description": "Use hosted Atlas with your own agents, skills, and customer-owned gateway.",
+  "seo": {
+    "metatags": {
+      "canonical": "https://docs.atlasmeets.com"
+    }
   },
-  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#0E7A55",
+    "light": "#E9F7F1",
+    "dark": "#0B1F18"
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs"
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Hosted Atlas",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Overview",
             "pages": [
               "index",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "atlas/dashboard-setup",
+              "atlas/agents-and-skills",
+              "atlas/deployment-modes"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Gateway",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Build And Connect",
             "pages": [
-              "api-reference/introduction"
+              "gateway/overview",
+              "gateway/build-with-an-agent",
+              "gateway/mock-gateway"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Contract v1",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "gateway/manifest",
+              "gateway/invoke",
+              "gateway/jobs-and-approvals",
+              "gateway/auth-and-signing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Gateway API",
+            "openapi": "openapi/gateway-v1.yaml",
+            "pages": [
+              "reference/gateway-reference",
+              "GET /v1/manifest",
+              "POST /v1/invoke",
+              "GET /v1/jobs/{jobId}",
+              "POST /v1/jobs/{jobId}/cancel"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    ]
   }
 }

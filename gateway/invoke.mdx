@@ -1,0 +1,127 @@
+---
+title: Invoke
+description: How Atlas calls a gateway action and what the gateway should return.
+---
+
+## The invoke request
+
+Atlas calls one action per invoke request.
+
+Example:
+
+```json
+{
+  "invocationId": "inv_123",
+  "idempotencyKey": "optional-key",
+  "traceId": "optional-trace-id",
+  "deadlineAt": "2026-03-18T01:23:45.000Z",
+  "meeting": {
+    "id": "meeting_123",
+    "roomName": "room_abc"
+  },
+  "session": {
+    "id": "ars_123",
+    "mode": "active"
+  },
+  "action": {
+    "id": "crm.lookup_customer",
+    "name": "lookup_customer",
+    "input": {
+      "email": "user@example.com"
+    }
+  },
+  "context": {
+    "meetingSummary": "",
+    "transcriptSummary": "",
+    "canvasSummary": ""
+  },
+  "callbacks": {
+    "jobResultUrl": "https://atlas.example/v1/gateway/jobs/callback",
+    "approvalUrl": "https://atlas.example/v1/gateway/approvals/callback",
+    "authorization": "Bearer ..."
+  }
+}
+```
+
+## Design rules
+
+- Keep action input inside `action.input`
+- Keep room and session context outside `action.input`
+- Do not depend on hidden routing state
+- Treat `invocationId` as the stable correlation id
+- Return useful `outputText` and `machineSummary` values whenever you can
+
+## Valid response states
+
+### `completed`
+
+The action finished immediately.
+
+```json
+{
+  "status": "completed",
+  "outputText": "Customer context found.",
+  "machineSummary": "Lookup completed.",
+  "dataSchemaVersion": "v1",
+  "data": {}
+}
+```
+
+### `accepted`
+
+The gateway started async work and returned a durable job id.
+
+```json
+{
+  "status": "accepted",
+  "outputText": "Workflow accepted and is now running.",
+  "job": {
+    "jobId": "job_123",
+    "status": "queued",
+    "statusUrl": "https://gateway.example/v1/jobs/job_123",
+    "cancelUrl": "https://gateway.example/v1/jobs/job_123/cancel"
+  }
+}
+```
+
+### `approval_required`
+
+The action should pause for human approval instead of running immediately.
+
+```json
+{
+  "status": "approval_required",
+  "outputText": "This action needs approval first.",
+  "approval": {
+    "approvalId": "approval_123",
+    "reason": "Manager approval required",
+    "expiresAt": "2026-03-18T02:00:00.000Z"
+  }
+}
+```
+
+### `rejected`
+
+The action cannot run.
+
+```json
+{
+  "status": "rejected",
+  "error": {
+    "code": "unknown_action",
+    "message": "Unknown action",
+    "retryable": false
+  }
+}
+```
+
+## Recommended behavior
+
+Start simple:
+
+- use `completed` for read-only actions that can finish quickly
+- use `accepted` for long-running work
+- use `approval_required` for sensitive actions
+- use `rejected` for invalid or impossible requests
+
+Do not overload one state to mimic another. Atlas tracks these flows differently.

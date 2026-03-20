@@ -1,0 +1,60 @@
+---
+title: Mock Gateway
+description: The local reference implementation of Gateway Contract v1 that ships with Atlas today.
+---
+
+## What it is
+
+The mock gateway is the reference local implementation of Gateway Contract v1.
+
+Right now it lives inside the local dev harness, but it behaves like a customer gateway:
+
+- it serves a manifest
+- it accepts invoke requests
+- it exposes job resources
+- it can return approval-shaped responses
+
+## Canonical local routes
+
+```text
+GET  /mock/customer-gateway/v1/manifest
+POST /mock/customer-gateway/v1/invoke
+GET  /mock/customer-gateway/v1/jobs/:jobId
+POST /mock/customer-gateway/v1/jobs/:jobId/cancel
+```
+
+## Local auth
+
+```text
+Authorization: Bearer atlas-local-shared-secret
+```
+
+## What it simulates
+
+- sync private research
+- sync internal tool calls
+- async workflow acceptance and completion
+- slow async jobs
+- cancellation
+- approval-required responses
+
+## Current example actions
+
+- `fetch_internal_context`
+- `query_mock_mcp_tool`
+- `trigger_followup_workflow`
+- `run_mock_long_job`
+- `request_manager_approval`
+
+## Why it matters
+
+The mock gateway is the fastest way to test:
+
+- the worker-to-gateway path
+- auth
+- invoke payload shape
+- async job behavior
+- approval behavior
+- dashboard validation
+
+before you wire Atlas into a real enterprise gateway.

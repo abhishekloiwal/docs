@@ -1,0 +1,89 @@
+---
+title: Jobs And Approvals
+description: Durable async jobs, polling, callbacks, and approval behavior in Gateway Contract v1.
+---
+
+## Async jobs
+
+If a workflow cannot finish immediately, the gateway should return `accepted` with a `jobId`.
+
+Atlas then has two ways to track the result:
+
+- polling
+- callbacks
+
+Polling is the v1 baseline.
+Callbacks are a useful upgrade, not a requirement for the first version.
+
+## Job states
+
+Jobs should move through these states:
+
+- `queued`
+- `running`
+- `completed`
+- `failed`
+- `cancelled`
+
+## Job resource
+
+Example:
+
+```json
+{
+  "jobId": "job_123",
+  "invocationId": "inv_123",
+  "actionId": "workflow.trigger_followup",
+  "actionName": "trigger_followup",
+  "status": "completed",
+  "outputText": "Workflow finished successfully.",
+  "machineSummary": "Workflow completed.",
+  "dataSchemaVersion": "v1",
+  "data": {},
+  "createdAt": "2026-03-18T01:00:00.000Z",
+  "updatedAt": "2026-03-18T01:05:00.000Z"
+}
+```
+
+## Cancellation
+
+If the gateway supports cancellation, Atlas should be able to call:
+
+```text
+POST /v1/jobs/:jobId/cancel
+```
+
+That endpoint should return the updated job resource.
+
+## Callbacks
+
+Callbacks are optional in v1, but they are useful for faster updates.
+
+If callbacks are enabled:
+
+- the gateway can post job results back to Atlas
+- the gateway should include:
+  - `x-atlas-timestamp`
+  - `x-atlas-signature: sha256=<hex-hmac>`
+- use the same shared secret that Atlas uses for invoke auth
+
+## Approval lane
+
+Approvals should be treated as a first-class flow.
+
+That means:
+
+- do not fake execution
+- do not return `completed`
+- do not force approval into a generic failure path
+
+Return `approval_required` instead, with a clear reason.
+
+## What Atlas needs back
+
+For both jobs and approvals, Atlas works best when it gets:
+
+- a clear state
+- a short human-facing summary
+- a short machine summary
+- stable ids for follow-up tracking

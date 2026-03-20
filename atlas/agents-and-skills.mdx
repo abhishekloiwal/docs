@@ -1,0 +1,107 @@
+---
+title: "Agents And Skills"
+description: "How Atlas agents, Atlas skills, and customer gateway actions fit together."
+---
+
+## The clean split
+
+There are three different things in the product, and they should stay separate.
+
+### Atlas agents
+
+An Atlas agent is the actual meeting participant.
+
+Each agent includes:
+
+- a realtime wrapper for live voice behavior
+- a brain for heavier reasoning and backend work
+- attached skills
+- an allowed subset of gateway actions
+
+### Atlas skills
+
+Skills live on the Atlas side.
+
+They are reusable markdown instruction packs that teach an agent how to do something well.
+
+Examples:
+
+- meeting notes
+- research synthesis
+- workflow operation
+- structured evaluation
+
+Skills are not customer tools. They are behavior and context.
+
+### Gateway actions
+
+Gateway actions live on the customer side.
+
+They are the actual callable tools Atlas can use through the customer gateway.
+
+Examples:
+
+- `fetch_internal_context`
+- `trigger_followup_workflow`
+- `lookup_candidate_packet`
+- `query_finance_agent`
+
+## Runtime flow
+
+When a meeting starts, the worker loads:
+
+- the agent config from Atlas
+- the attached skill metadata from Atlas
+- the gateway manifest from the customer gateway
+
+Then Atlas does two different things:
+
+- it exposes allowed gateway actions to the brain as callable tools
+- it exposes attached skill metadata to both realtime and brain, and either side can load the full skill on demand
+
+## How skills are loaded
+
+Atlas uses progressive disclosure for skills.
+
+That means:
+
+- the worker injects skill metadata first
+- the full `SKILL.md` body is not injected up front
+- realtime or brain can call `load_attached_skill(...)` when a skill is clearly relevant
+
+This keeps context cleaner and gives Atlas a trace of which skills were actually used.
+
+## What the dashboard controls
+
+The dashboard has three separate surfaces:
+
+- `Gateway`
+  - register the workspace gateway
+  - validate the manifest and invoke path
+  - inspect available gateway actions
+- `Skills`
+  - create and edit workspace skills
+  - store the markdown bodies Atlas can load later
+- `Agents`
+  - edit the agent's base prompts
+  - attach skills
+  - choose which gateway actions that agent can actually see
+
+## Hard vs soft control
+
+Use both.
+
+- gateway action scope is the hard boundary
+  - if an agent should not use a tool, remove it from that agent's visible action set
+- skills and prompts are soft guidance
+  - they shape how the agent behaves and when it uses the tools it can see
+
+## Recommended starting point
+
+For a new workspace:
+
+1. connect one gateway
+2. create one or two useful skills
+3. attach those skills to the default Atlas agent
+4. allow only the smallest useful set of gateway actions
+5. test in a real meeting

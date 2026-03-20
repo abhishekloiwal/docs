@@ -1,0 +1,95 @@
+---
+title: "Build With An Agent"
+description: "Give these markdown files to your internal coding agent so it can scaffold the Atlas gateway for you."
+---
+
+## You do not have to build this by hand
+
+Many teams will use an internal coding agent to create the first gateway.
+
+That is a good fit for this contract.
+
+The easiest way to do it is:
+
+1. hand your agent a short brief
+2. hand it the manifest checklist
+3. hand it the acceptance-test file
+4. ask it to produce a small HTTP service that matches the Atlas contract
+
+## The builder pack
+
+These markdown files live in this repo and are meant to be copied into your own environment:
+
+- `templates/gateway-builder-brief.md`
+- `templates/gateway-manifest-checklist.md`
+- `templates/gateway-acceptance-tests.md`
+
+## What the internal coding agent should build
+
+The first version should be small:
+
+- `GET /v1/manifest`
+- `POST /v1/invoke`
+- bearer auth
+- one read-only action
+
+Then add:
+
+- one async action
+- one approval-required action
+- job status and cancel endpoints if needed
+
+## The output you want from the coding agent
+
+Ask for:
+
+- a small runnable service
+- the manifest
+- one real read-only action
+- curl examples
+- tests for the manifest and invoke paths
+
+## What not to ask it for first
+
+Avoid asking the first version to:
+
+- expose every internal API
+- proxy raw downstream secrets
+- add many actions at once
+- add continuous background behavior
+
+Start with a narrow contract that Atlas can validate and call cleanly.
+
+## Recommended prompt
+
+```md
+Build a small Atlas gateway that implements the hosted Atlas Gateway Contract v1.
+
+Use the attached markdown files as the source of truth:
+
+- gateway-builder-brief.md
+- gateway-manifest-checklist.md
+- gateway-acceptance-tests.md
+
+Requirements:
+- expose GET /v1/manifest
+- expose POST /v1/invoke
+- use bearer auth
+- start with one read-only action
+- keep the code simple and easy to extend
+
+Deliver:
+- the gateway service
+- sample manifest output
+- curl examples
+- tests
+```
+
+## After it is built
+
+Once the gateway exists:
+
+1. register it in the Atlas dashboard
+2. run the built-in sync check
+3. run async and approval checks if you support them
+4. test it in a real meeting

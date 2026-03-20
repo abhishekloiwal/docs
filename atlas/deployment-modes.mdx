@@ -1,0 +1,45 @@
+---
+title: "Deployment Modes"
+description: "How hosted Atlas reaches the customer gateway today, and what changes later for enterprise-hosted workers."
+---
+
+## Hosted Atlas first
+
+The first product path is:
+
+- the Atlas worker runs in the cloud
+- the customer gateway is exposed securely to Atlas over a reachable endpoint
+
+This is the simplest way to get value quickly.
+
+Examples:
+
+- public HTTPS with signed auth
+- private networking plus controlled ingress
+- Tailscale or similar private access
+- temporary public HTTPS tunnel for canary testing
+
+## Enterprise-hosted worker later
+
+Some customers will want the worker to run inside their own network.
+
+That path matters when the gateway or downstream systems are only reachable from the internal network.
+
+In that model:
+
+- the Atlas worker runs inside the customer environment
+- the gateway stays local or internal
+
+## What stays the same
+
+In both modes:
+
+- the agent model is the same
+- the gateway contract is the same
+- the room behavior is the same
+
+The difference is only where the worker lives and how it reaches the gateway.
+
+<Note>
+The public docs should focus on the hosted path first. Enterprise-hosted workers are a second deployment mode, not the main onboarding story.
+</Note>

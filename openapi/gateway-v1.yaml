@@ -1,0 +1,462 @@
+openapi: 3.1.0
+info:
+  title: Atlas Gateway Contract v1
+  version: 1.0.0
+  description: |
+    The customer-owned gateway contract used by hosted Atlas to discover actions,
+    invoke work, and monitor async jobs.
+servers:
+  - url: https://gateway.example.com
+    description: Example customer gateway
+security:
+  - bearerAuth: []
+tags:
+  - name: Gateway
+    description: Discovery and execution endpoints exposed by a customer gateway.
+paths:
+  /v1/manifest:
+    get:
+      operationId: getManifest
+      tags: [Gateway]
+      summary: Fetch gateway manifest
+      description: Returns the discovery document Atlas uses to understand which actions your gateway exposes.
+      responses:
+        '200':
+          description: Manifest returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayManifest'
+              examples:
+                example:
+                  value:
+                    version: "2026-03-18"
+                    gateway:
+                      id: "acme.gateway"
+                      name: "Acme Gateway"
+                      url: "https://gateway.example.com"
+                      auth:
+                        type: "bearer"
+                      capabilities:
+                        asyncJobs: true
+                        jobCallbacks: true
+                        approvals: true
+                    agent:
+                      id: "customer-research-agent"
+                      name: "Customer Research Agent"
+                      description: "Internal workflow layer exposed through the gateway."
+                    actions:
+                      - id: "context.fetch_pricing"
+                        name: "fetch_pricing_context"
+                        title: "Fetch pricing context"
+                        description: "Return a compact internal pricing summary."
+                        executionMode: "sync"
+                        inputSchema:
+                          type: object
+                          properties:
+                            topic:
+                              type: string
+                          required: [topic]
+                          additionalProperties: false
+                        requiresApproval: false
+                        sideEffectLevel: "read"
+                        idempotent: true
+                    callbacks:
+                      jobResults: true
+                      approvals: true
+  /v1/invoke:
+    post:
+      operationId: invokeAction
+      tags: [Gateway]
+      summary: Invoke gateway action
+      description: Invokes one gateway action on behalf of a hosted Atlas task.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GatewayInvokeRequest'
+      responses:
+        '200':
+          description: Action handled by the gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayInvokeResponse'
+        '401':
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayErrorEnvelope'
+        '422':
+          description: Request shape or action input was invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayErrorEnvelope'
+  /v1/jobs/{jobId}:
+    get:
+      operationId: getJob
+      tags: [Gateway]
+      summary: Fetch job status
+      description: Returns the current state of an async job previously accepted by the gateway.
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job resource returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayJobResource'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayErrorEnvelope'
+  /v1/jobs/{jobId}/cancel:
+    post:
+      operationId: cancelJob
+      tags: [Gateway]
+      summary: Cancel job
+      description: Requests cancellation for a running or queued async job.
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated job resource returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayJobCancelResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayErrorEnvelope'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Token
+  schemas:
+    GatewayManifest:
+      type: object
+      additionalProperties: false
+      required: [version, gateway, agent, actions, callbacks]
+      properties:
+        version:
+          type: string
+        gateway:
+          $ref: '#/components/schemas/GatewayMetadata'
+        agent:
+          $ref: '#/components/schemas/GatewayAgent'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/GatewayAction'
+        callbacks:
+          $ref: '#/components/schemas/GatewayCallbacks'
+    GatewayMetadata:
+      type: object
+      additionalProperties: false
+      required: [id, name, url]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+          format: uri
+        description:
+          type: string
+        auth:
+          type: object
+          additionalProperties: true
+        capabilities:
+          type: object
+          additionalProperties: true
+    GatewayAgent:
+      type: object
+      additionalProperties: false
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+    GatewayAction:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - description
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        executionMode:
+          type: string
+          enum: [sync, async, either]
+        inputSchema:
+          type: object
+          additionalProperties: true
+        outputSchema:
+          type: object
+          additionalProperties: true
+        outputDescription:
+          type: string
+        requiresApproval:
+          type: boolean
+        sideEffectLevel:
+          type: string
+          enum: [none, read, write]
+        idempotent:
+          type: boolean
+        timeoutMs:
+          type: integer
+        scopes:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+    GatewayCallbacks:
+      type: object
+      additionalProperties: false
+      properties:
+        jobResults:
+          type: boolean
+        approvals:
+          type: boolean
+    GatewayInvokeRequest:
+      type: object
+      additionalProperties: false
+      required: [invocationId, meeting, session, action, context, callbacks]
+      properties:
+        invocationId:
+          type: string
+        idempotencyKey:
+          type: string
+        traceId:
+          type: string
+        deadlineAt:
+          type: string
+          format: date-time
+        meeting:
+          type: object
+          additionalProperties: false
+          required: [id, roomName]
+          properties:
+            id:
+              type: string
+            roomName:
+              type: string
+        session:
+          type: object
+          additionalProperties: false
+          required: [id, mode]
+          properties:
+            id:
+              type: string
+            mode:
+              type: string
+              enum: [active, passive, listening]
+        action:
+          type: object
+          additionalProperties: false
+          required: [input]
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            input:
+              type: object
+              additionalProperties: true
+        context:
+          type: object
+          additionalProperties: true
+        callbacks:
+          type: object
+          additionalProperties: false
+          properties:
+            jobResultUrl:
+              type: string
+              format: uri
+            approvalUrl:
+              type: string
+              format: uri
+            authorization:
+              type: string
+    GatewayInvokeResponse:
+      oneOf:
+        - $ref: '#/components/schemas/GatewayCompletedResponse'
+        - $ref: '#/components/schemas/GatewayAcceptedResponse'
+        - $ref: '#/components/schemas/GatewayApprovalRequiredResponse'
+        - $ref: '#/components/schemas/GatewayRejectedResponse'
+    GatewayCompletedResponse:
+      type: object
+      additionalProperties: false
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [completed]
+        outputText:
+          type: string
+        machineSummary:
+          type: string
+        dataSchemaVersion:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+    GatewayAcceptedResponse:
+      type: object
+      additionalProperties: false
+      required: [status, job]
+      properties:
+        status:
+          type: string
+          enum: [accepted]
+        outputText:
+          type: string
+        machineSummary:
+          type: string
+        job:
+          type: object
+          additionalProperties: false
+          required: [jobId, status]
+          properties:
+            jobId:
+              type: string
+            status:
+              type: string
+              enum: [queued, running]
+            statusUrl:
+              type: string
+              format: uri
+            cancelUrl:
+              type: string
+              format: uri
+    GatewayApprovalRequiredResponse:
+      type: object
+      additionalProperties: false
+      required: [status, approval]
+      properties:
+        status:
+          type: string
+          enum: [approval_required]
+        outputText:
+          type: string
+        machineSummary:
+          type: string
+        approval:
+          type: object
+          additionalProperties: false
+          required: [approvalId, reason]
+          properties:
+            approvalId:
+              type: string
+            reason:
+              type: string
+            statusUrl:
+              type: string
+              format: uri
+            expiresAt:
+              type: string
+              format: date-time
+    GatewayRejectedResponse:
+      type: object
+      additionalProperties: false
+      required: [status, error]
+      properties:
+        status:
+          type: string
+          enum: [rejected]
+        error:
+          $ref: '#/components/schemas/GatewayError'
+    GatewayJobResource:
+      type: object
+      additionalProperties: false
+      required: [jobId, invocationId, status, createdAt, updatedAt]
+      properties:
+        jobId:
+          type: string
+        invocationId:
+          type: string
+        actionId:
+          type: string
+        actionName:
+          type: string
+        status:
+          type: string
+          enum: [queued, running, completed, failed, cancelled]
+        outputText:
+          type: string
+        machineSummary:
+          type: string
+        dataSchemaVersion:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+        error:
+          $ref: '#/components/schemas/GatewayError'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    GatewayJobCancelResponse:
+      type: object
+      additionalProperties: false
+      required: [job]
+      properties:
+        job:
+          $ref: '#/components/schemas/GatewayJobResource'
+    GatewayError:
+      type: object
+      additionalProperties: false
+      required: [code, message, retryable]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        retryable:
+          type: boolean
+        details:
+          type: object
+          additionalProperties: true
+    GatewayErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          $ref: '#/components/schemas/GatewayError'

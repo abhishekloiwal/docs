@@ -1,0 +1,105 @@
+---
+title: Manifest
+description: The discovery document Atlas reads from the customer gateway.
+---
+
+## Purpose
+
+The manifest tells Atlas what the gateway can do.
+
+It should be stable, explicit, and machine-readable.
+
+## Top-level shape
+
+```json
+{
+  "version": "2026-03-18",
+  "gateway": {},
+  "agent": {},
+  "actions": [],
+  "callbacks": {
+    "jobResults": true,
+    "approvals": true
+  }
+}
+```
+
+## Gateway metadata
+
+The `gateway` object should describe:
+
+- `id`
+- `name`
+- `url`
+- optional `description`
+- auth mode
+- high-level capabilities such as async jobs, callbacks, and approvals
+
+## Agent metadata
+
+The `agent` block is descriptive metadata from the customer side.
+
+It can identify the internal system or capability layer behind the gateway, but it is not an Atlas agent definition.
+
+## Actions
+
+Actions are the actual callable units.
+
+Each action should expose:
+
+- optional `id`
+- `name`
+- optional `title`
+- `description`
+- `executionMode`
+- `inputSchema`
+- optional `outputSchema`
+- optional `outputDescription`
+- `requiresApproval`
+- `sideEffectLevel`
+- `idempotent`
+- optional `timeoutMs`
+- optional `scopes`
+- optional `tags`
+
+## Schema guidance
+
+Keep the schema subset simple and provider-safe.
+
+Good:
+
+- `type`
+- `properties`
+- `required`
+- `items`
+- `enum`
+- `additionalProperties`
+
+Avoid in v1:
+
+- `$ref`
+- `oneOf`
+- `anyOf`
+- deep schema indirection
+
+## Example action
+
+```json
+{
+  "name": "lookup_customer",
+  "title": "Lookup Customer",
+  "description": "Return a compact customer profile from the internal CRM.",
+  "executionMode": "sync",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "email": { "type": "string" }
+    },
+    "required": ["email"],
+    "additionalProperties": false
+  },
+  "requiresApproval": false,
+  "sideEffectLevel": "read",
+  "idempotent": true
+}
+```

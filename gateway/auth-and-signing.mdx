@@ -1,0 +1,61 @@
+---
+title: Auth And Signing
+description: How Atlas should authenticate to your gateway and how you should verify callbacks.
+---
+
+## v1 baseline
+
+Keep v1 simple but not naive.
+
+Use one shared secret per workspace gateway.
+
+## Atlas to gateway
+
+The gateway should verify that Atlas is allowed to call it.
+
+The simplest first version is:
+
+```text
+Authorization: Bearer <shared-secret>
+```
+
+## Gateway to Atlas callbacks
+
+If your gateway sends async job or approval callbacks back to Atlas, sign them with the same shared secret.
+
+Recommended headers:
+
+```text
+x-atlas-timestamp: 1710777600
+x-atlas-signature: sha256=<hex-hmac>
+```
+
+Signature input:
+
+```text
+${timestamp}.${canonical_json_body}
+```
+
+Atlas should verify:
+
+- timestamp is recent
+- signature matches
+- stale or replayed payloads are rejected
+
+Bearer-auth callbacks may exist as a short-term compatibility path, but signed callbacks should be treated as the v1 production default.
+
+## What to avoid
+
+- anonymous invoke endpoints
+- reusing broad internal tokens
+- leaking downstream service credentials into the Atlas-facing contract
+- forcing Atlas to know your internal auth scheme
+
+## Better hardening later
+
+Once the basic flow is working, the next upgrades are:
+
+- tighter replay protection
+- per-tenant credentials
+- short-lived tokens
+- mTLS or private network controls where needed
