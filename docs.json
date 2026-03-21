@@ -13,6 +13,12 @@
     "light": "#E9F7F1",
     "dark": "#0B1F18"
   },
+  "background": {
+    "color": {
+      "light": "#F5F5F0",
+      "dark": "#0B1F18"
+    }
+  },
   "styling": {
     "eyebrows": "breadcrumbs"
   },
