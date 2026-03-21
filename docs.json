@@ -3,6 +3,11 @@
   "theme": "mint",
   "name": "Atlas Docs",
   "description": "Use hosted Atlas with your own agents, skills, and customer-owned gateway.",
+  "logo": {
+    "light": "/atlas-icon.svg",
+    "dark": "/atlas-icon.svg"
+  },
+  "favicon": "/apple-touch-icon.svg",
   "seo": {
     "metatags": {
       "canonical": "https://docs.atlasmeets.com"
