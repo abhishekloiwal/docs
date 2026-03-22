@@ -37,8 +37,9 @@ The clean minimum is:
 - `title`
 - optional `summary`
 - optional `atlas.openingSpeech`
-- `canvas.pages[]`
-- `canvas.pages[].html`
+- either:
+  - `canvas.pages[]` with `html`
+  - or `sections[]` with speech only
 
 Everything else can be added later.
 
@@ -127,6 +128,30 @@ This smaller payload is also fine:
 
 Atlas will fill in the missing behavior with defaults.
 
+## Speech-only version
+
+If you do not want any canvas at all, a speech-only debrief is also valid:
+
+```json
+{
+  "version": "atlas-debrief-v1",
+  "title": "Workflow Debrief",
+  "summary": "The workflow completed successfully.",
+  "atlas": {
+    "openingSpeech": "I have a short workflow debrief ready. Let me know when you want me to begin.",
+    "delivery": "manual"
+  },
+  "sections": [
+    {
+      "title": "Summary",
+      "speech": "The workflow completed successfully. Three records were updated and no approvals are pending.",
+      "checkpointPrompt": "If you want, I can explain the changes in more detail.",
+      "delivery": "wait_for_prompt"
+    }
+  ]
+}
+```
+
 ## What Atlas does with it
 
 When Atlas uses a debrief contract, it can:
@@ -157,6 +182,10 @@ If you omit fields, Atlas falls back to sensible defaults:
 The main required field for a canvas-backed debrief is:
 
 - `canvas.pages[].html`
+
+For a speech-only debrief, the main required field is:
+
+- `sections[].speech`
 
 ## Why sections are separate from pages
 
