@@ -83,6 +83,65 @@ Important field:
 
 Atlas uses that as the stable external key when it syncs debriefs into its own storage.
 
+## How to fill this in
+
+If you hand this page to an internal coding agent, the practical guidance is:
+
+- `externalId`
+  - stable ID for the same debrief across refreshes
+  - do **not** generate a new random ID on every poll
+  - good examples: eval run ID, workflow run ID, job execution ID
+- `title`
+  - short user-facing label in the Atlas dashboard
+  - aim for something a person can skim quickly
+- `summary`
+  - one-line description for the dashboard list
+  - this should explain why the debrief matters, not restate the title
+- `status`
+  - usually just `ready`
+  - Atlas currently expects ready-to-present debriefs here
+- `contract.version`
+  - use `atlas-debrief-v1`
+- `contract.title`
+  - usually the same as the top-level `title`
+  - this is the debrief title Atlas sees at presentation time
+- `contract.summary`
+  - optional longer summary for Atlas context
+- `contract.atlas.openingSpeech`
+  - the first sentence Atlas says before it pauses
+  - example: `I have a debrief ready on the latest eval run. Let me know when you're ready to proceed.`
+- `contract.atlas.instructions`
+  - extra delivery guidance for Atlas
+  - for example: `Keep this concise and pause after each section.`
+- `contract.atlas.delivery`
+  - use `manual` if Atlas should wait for the room to say `ready` or `next`
+  - omit it if you do not care yet
+- `contract.canvas.pages`
+  - what Atlas should show if there is a canvas
+  - each page should have user-facing `title` and rendered `html`
+- `contract.sections`
+  - what Atlas should say section by section
+  - use this when you want controlled progression, pauses, or speech-only debriefs
+- `contract.sections[].speech`
+  - the actual content Atlas should present for that section
+- `contract.sections[].checkpointPrompt`
+  - optional prompt Atlas uses before pausing
+  - example: `Let me know when you want to move to the next section.`
+- `contract.sections[].pageIndex`
+  - which canvas page that section belongs to
+  - omit it for speech-only debriefs
+
+Good first rules for an internal coding agent:
+
+- if the workflow produced charts or tables, include `canvas.pages`
+- if the workflow produced mostly narrative text, use `sections`
+- if both exist, include both
+- if you are unsure, start with:
+  - one `openingSpeech`
+  - one `summary`
+  - one or more `sections`
+  - and only add canvas pages when you have something genuinely visual to show
+
 ## Keep it simple
 
 Do not over-engineer the first debrief contract.
