@@ -51,6 +51,7 @@
             "pages": [
               "gateway/overview",
               "gateway/build-with-an-agent",
+              "gateway/debrief-contracts",
               "gateway/mock-gateway"
             ]
           },

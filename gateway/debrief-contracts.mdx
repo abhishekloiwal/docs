@@ -1,0 +1,214 @@
+---
+title: Debrief Contracts
+description: How a customer gateway can shape a guided debrief that Atlas later presents with speech and canvas pages.
+---
+
+## What this is
+
+A debrief contract is a structured payload that tells Atlas how to present completed external work back into a meeting.
+
+This is useful when work finishes outside the room and Atlas should later:
+
+- open with a short explanation
+- preload canvas pages
+- walk the room through the result step by step
+- pause naturally between sections
+
+Think of it as a presentation plan, not a rigid script.
+
+## What this page covers
+
+This page describes the **payload shape** Atlas expects.
+
+It does **not** define the final public write transport yet.
+
+The important part for a gateway or downstream workflow is:
+
+- what fields Atlas can use
+- which fields are optional
+- how Atlas behaves when some fields are missing
+
+## Keep it simple
+
+Do not over-engineer the first debrief contract.
+
+The clean minimum is:
+
+- `title`
+- optional `summary`
+- optional `atlas.openingSpeech`
+- `canvas.pages[]`
+- `canvas.pages[].html`
+
+Everything else can be added later.
+
+## Recommended long-term version
+
+Atlas now supports a stable long-term shape:
+
+```json
+{
+  "version": "atlas-debrief-v1",
+  "title": "Braintrust Eval Debrief",
+  "summary": "Latest eval results with score breakdown and next steps.",
+  "atlas": {
+    "openingSpeech": "I have a debrief ready on the latest eval run. Let me know when you're ready to proceed.",
+    "instructions": "Keep this conversational and pause between sections.",
+    "delivery": "manual"
+  },
+  "canvas": {
+    "title": "Eval Debrief",
+    "deliveryMode": "replace",
+    "pages": [
+      {
+        "title": "Overview",
+        "html": "<div>...</div>"
+      },
+      {
+        "title": "Score Distribution",
+        "html": "<div>...</div>"
+      },
+      {
+        "title": "Follow-ups",
+        "html": "<div>...</div>"
+      }
+    ]
+  },
+  "sections": [
+    {
+      "title": "Overview",
+      "speech": "Here is the overview...",
+      "checkpointPrompt": "Let me know when you want to move to the score distribution.",
+      "pageIndex": 0,
+      "delivery": "wait_for_prompt"
+    },
+    {
+      "title": "Score Distribution",
+      "speech": "This page shows the score spread by suite...",
+      "pageIndex": 1,
+      "delivery": "wait_for_prompt"
+    },
+    {
+      "title": "Follow-ups",
+      "speech": "The main follow-ups are...",
+      "pageIndex": 2,
+      "delivery": "wait_for_prompt"
+    }
+  ],
+  "actions": {
+    "speakToRoom": true,
+    "openCanvas": true
+  },
+  "metadata": {
+    "source": "braintrust",
+    "runId": "eval_123"
+  }
+}
+```
+
+## Minimal version
+
+This smaller payload is also fine:
+
+```json
+{
+  "version": "atlas-debrief-v1",
+  "title": "Eval Debrief",
+  "canvas": {
+    "pages": [
+      {
+        "title": "Overview",
+        "html": "<div>...</div>"
+      }
+    ]
+  }
+}
+```
+
+Atlas will fill in the missing behavior with defaults.
+
+## What Atlas does with it
+
+When Atlas uses a debrief contract, it can:
+
+- preload the canvas pages into the room
+- start in active mode
+- open with `atlas.openingSpeech` if present
+- advance section by section when the room says `ready`, `continue`, `next`, or `proceed`
+- answer questions in between instead of blindly plowing ahead
+
+## Optional fields and defaults
+
+Atlas is intentionally forgiving here.
+
+If you omit fields, Atlas falls back to sensible defaults:
+
+- no `summary`
+  - Atlas still uses the `title`
+- no `atlas.openingSpeech`
+  - Atlas can still present the debrief
+- no `sections`
+  - Atlas derives sections from the canvas pages in order
+- no `pageIndex`
+  - Atlas maps sections to pages by position
+- no `actions`
+  - Atlas assumes normal room presentation behavior
+
+The main required field for a canvas-backed debrief is:
+
+- `canvas.pages[].html`
+
+## Why sections are separate from pages
+
+Keep `sections` and `canvas.pages` separate.
+
+That gives you a cleaner long-term contract:
+
+- `canvas.pages`
+  - what Atlas should show
+- `sections`
+  - what Atlas should say
+  - when it should pause
+  - which page each section belongs to
+
+This is more flexible than forcing every page to carry all of the speaking logic.
+
+## Delivery guidance
+
+Use these simple defaults:
+
+- `atlas.delivery: "manual"`
+  - Atlas waits for the room to proceed
+- `sections[].delivery: "wait_for_prompt"`
+  - Atlas presents one section, then pauses
+
+This usually feels better than auto-advancing.
+
+## Backward compatibility
+
+Atlas still accepts the earlier dated contract shape used in the initial prototype.
+
+The recommended shape going forward is:
+
+- `version: "atlas-debrief-v1"`
+
+## Good first use cases
+
+- eval completed
+- workflow finished
+- internal review ready
+- candidate packet prepared
+- sales research compiled
+- incident summary ready
+
+## Recommended rollout
+
+Start with one debrief shape that is easy to trust:
+
+1. one title
+2. one summary
+3. three canvas pages
+4. one short opening line
+5. one section per page
+
+Once that works, you can add richer metadata and follow-up actions later.
