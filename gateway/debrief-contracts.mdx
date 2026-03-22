@@ -20,13 +20,68 @@ Think of it as a presentation plan, not a rigid script.
 
 This page describes the **payload shape** Atlas expects.
 
-It does **not** define the final public write transport yet.
-
 The important part for a gateway or downstream workflow is:
 
 - what fields Atlas can use
 - which fields are optional
 - how Atlas behaves when some fields are missing
+
+## How Atlas picks debriefs up
+
+Atlas does **not** expect the customer gateway to write directly into Supabase.
+
+Instead:
+
+1. the customer gateway exposes a normal read action
+2. Atlas calls that action from the dashboard
+3. Atlas normalizes the returned debrief payloads
+4. Atlas upserts them into its own control-plane storage
+5. Atlas then shows them in the dashboard and can present them in-room
+
+Recommended action names:
+
+- `list_ready_debriefs`
+- `list_debriefs`
+
+The current Atlas dashboard checks for those names in the gateway manifest and uses the first one it finds.
+
+## Recommended action response shape
+
+The easiest response shape is:
+
+```json
+{
+  "status": "completed",
+  "data": {
+    "debriefs": [
+      {
+        "externalId": "eval_123",
+        "title": "Braintrust Eval Debrief",
+        "summary": "Latest eval results with score breakdown and next steps.",
+        "status": "ready",
+        "contract": {
+          "version": "atlas-debrief-v1",
+          "title": "Braintrust Eval Debrief",
+          "canvas": {
+            "pages": [
+              {
+                "title": "Overview",
+                "html": "<div>...</div>"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}
+```
+
+Important field:
+
+- `externalId`
+
+Atlas uses that as the stable external key when it syncs debriefs into its own storage.
 
 ## Keep it simple
 
