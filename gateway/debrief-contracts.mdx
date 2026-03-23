@@ -142,6 +142,119 @@ Good first rules for an internal coding agent:
   - one or more `sections`
   - and only add canvas pages when you have something genuinely visual to show
 
+## Keep the canvas light
+
+Atlas can present rich canvas pages, but the gateway should still keep them reasonably lean.
+
+The practical rule is:
+
+- send the smallest canvas that still makes the point clearly
+
+Good working heuristics:
+
+- aim for `1` to `3` pages for most debriefs
+- use `4` or `5` pages only when each page clearly has a different purpose
+- keep one main idea per page
+- prefer one chart or one table per page, not many
+- prefer short summaries over raw dumps
+- do not paste a full report, full markdown file, or giant HTML blob into one page
+- if the result is mostly narrative, use `sections` and keep the canvas simple or omit it entirely
+
+When in doubt, use this structure:
+
+1. overview
+2. metrics or evidence
+3. follow-ups
+
+## What to avoid
+
+These are the most common mistakes for gateway-side agents:
+
+- too many pages
+- overly dense tables with lots of columns and rows
+- giant embedded scripts or repeated chart libraries
+- pasting a long report verbatim instead of summarizing it
+- multiple visuals competing on the same page
+- pages that only restate what Atlas is already going to say aloud
+
+If the external result is large, Atlas does **not** need the whole thing rendered on canvas.
+
+A better pattern is:
+
+- put the key takeaway in `sections[].speech`
+- render only the most useful visual or summary on canvas
+- keep the rest in `metadata` or leave it behind the gateway
+
+## Good canvas patterns
+
+Good first-page patterns:
+
+- three KPI cards and one short takeaway sentence
+- one short summary paragraph and one compact table
+- one bar chart and one sentence explaining what matters
+
+Good follow-up page patterns:
+
+- top 3 issues and recommended next steps
+- one comparison table with only the most important rows
+- one timeline or one checklist
+
+If you are unsure whether something belongs on canvas, ask:
+
+- would a human benefit from seeing this while Atlas speaks?
+
+If the answer is no, keep it in `sections` instead.
+
+## Suggested size guidance
+
+Atlas does not require a strict byte budget here, but these are good practical targets:
+
+- most debriefs: `1` to `3` pages
+- most page HTML: stay comfortably small and focused
+- most tables: keep to the most important rows only
+- most charts: one chart per page is enough
+
+You do **not** need to maximize visual richness.
+
+Clarity matters more than density.
+
+## Few-shot examples
+
+### Good: lightweight metrics page
+
+- title: `Overview`
+- canvas:
+  - three KPI cards
+  - one sentence: `Pass rate improved, but citations still need attention.`
+- speech:
+  - short explanation of what changed
+
+### Good: narrative debrief with no canvas
+
+- `sections[]` only
+- Atlas speaks:
+  - what completed
+  - what changed
+  - what should happen next
+- no canvas because there is nothing genuinely visual to show
+
+### Good: one simple evidence page
+
+- title: `Top Issues`
+- canvas:
+  - compact table with `Area`, `Why it matters`, `Next step`
+- speech:
+  - short walkthrough of the top 2 or 3 issues
+
+### Bad: raw report dump
+
+- one huge HTML page
+- many sections pasted verbatim
+- multiple large charts
+- long markdown converted directly to HTML
+
+That usually makes the canvas harder to read and gives Atlas too much low-signal material.
+
 ## Keep it simple
 
 Do not over-engineer the first debrief contract.
