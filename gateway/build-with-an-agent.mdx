@@ -46,6 +46,13 @@ The first version should be small:
 - bearer auth
 - one read-only action
 
+For the manifest, tell the coding agent to keep `inputSchema` strict-safe from the start:
+
+- root object schemas only
+- `additionalProperties: false`
+- `required: []` for no-input actions
+- nullable required fields for optional params
+
 Then add:
 
 - one async action

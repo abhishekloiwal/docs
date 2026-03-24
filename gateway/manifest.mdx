@@ -82,6 +82,48 @@ Avoid in v1:
 - `anyOf`
 - deep schema indirection
 
+## Strict-safe input schemas
+
+Atlas is moving toward exposing gateway actions as first-class typed tools whenever the manifest schema is clean enough.
+
+That works best when action `inputSchema` follows a strict-safe shape:
+
+- root schema is always an object
+- `additionalProperties: false`
+- include `required: []` even for no-input actions
+- if a field is optional, prefer a nullable required field instead of omitting it from `required`
+
+Examples:
+
+No-input action:
+
+```json
+{
+  "type": "object",
+  "properties": {},
+  "required": [],
+  "additionalProperties": false
+}
+```
+
+Optional field, strict-safe:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": ["string", "null"],
+      "description": "Optional report date in YYYY-MM-DD format."
+    }
+  },
+  "required": ["date"],
+  "additionalProperties": false
+}
+```
+
+This keeps the manifest easy for coding agents to generate and easier for Atlas to turn into robust tool calls.
+
 ## Example action
 
 ```json

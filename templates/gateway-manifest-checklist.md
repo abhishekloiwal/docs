@@ -70,3 +70,44 @@ Avoid for v1:
 - `oneOf`
 - `anyOf`
 - deep schema indirection
+
+## Prefer strict-safe input schemas
+
+If possible, shape action `inputSchema` so Atlas can expose it as a typed tool directly.
+
+Best practice:
+
+- root schema is always `type: object`
+- set `additionalProperties: false`
+- include `required: []` for no-input actions
+- for optional fields, prefer nullable required fields
+
+Examples:
+
+No-input action:
+
+```json
+{
+  "type": "object",
+  "properties": {},
+  "required": [],
+  "additionalProperties": false
+}
+```
+
+Optional string field:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": ["string", "null"]
+    }
+  },
+  "required": ["date"],
+  "additionalProperties": false
+}
+```
+
+This is not required on day one, but it is the cleanest format going forward.
