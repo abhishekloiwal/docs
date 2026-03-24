@@ -457,6 +457,55 @@ The recommended shape going forward is:
 - sales research compiled
 - incident summary ready
 
+## What makes a debrief genuinely useful
+
+A good debrief is not just "some data is available."
+
+It should represent a moment where a human would actually benefit from Atlas bringing something back into the room.
+
+Good triggers usually look like:
+
+- an overnight research batch finished and now needs a short walkthrough
+- a weekly or daily report is ready for a team review
+- an eval or workflow completed and the interesting part is the result, not the raw execution log
+- a webhook from an internal system means there is now a human-ready summary worth presenting
+- a scheduled morning startup or weekly wrap-up should begin from a clear briefing
+
+Practical rule:
+
+- do the scheduling, cron, webhook, and upstream orchestration in your own gateway or workflow system
+- only expose the debrief to Atlas once it is genuinely ready to present
+
+Atlas is best when it receives something already shaped for human review, not an intermediate machine artifact.
+
+## Reference shape: clean weekly debrief
+
+If you are building a first production debrief, this is a good target:
+
+1. `Overview`
+   - three KPI cards
+   - one sentence on what changed
+2. `Main Drivers`
+   - one chart or one compact comparison table
+   - the top two or three reasons behind the change
+3. `Follow-ups`
+   - the most important next actions
+   - who should care and what should happen next
+
+For speech:
+
+- one short opening line
+- one concise section per page
+- one pause between sections
+
+This is usually much better than:
+
+- pasting the whole report into page 1
+- speaking the full report aloud
+- making Atlas summarize a giant blob in real time
+
+If you already have a long report, keep the report in your system of record and let the debrief be the presentation layer.
+
 ## Recommended rollout
 
 Start with one debrief shape that is easy to trust:
