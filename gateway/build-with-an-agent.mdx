@@ -18,11 +18,24 @@ The easiest way to do it is:
 
 ## The builder pack
 
-These markdown files live in this repo and are meant to be copied into your own environment:
+If you are reading the hosted docs, use these links directly.
 
-- `templates/gateway-builder-brief.md`
-- `templates/gateway-manifest-checklist.md`
-- `templates/gateway-acceptance-tests.md`
+These are plain markdown files you can copy into Claude, Codex, Cursor, or your own internal coding agent workflow:
+
+- [gateway-builder-brief.md](https://raw.githubusercontent.com/abhishekloiwal/docs/main/templates/gateway-builder-brief.md)
+- [gateway-manifest-checklist.md](https://raw.githubusercontent.com/abhishekloiwal/docs/main/templates/gateway-manifest-checklist.md)
+- [gateway-acceptance-tests.md](https://raw.githubusercontent.com/abhishekloiwal/docs/main/templates/gateway-acceptance-tests.md)
+
+If you want to inspect them in GitHub first:
+
+- [templates/](https://github.com/abhishekloiwal/docs/tree/main/templates)
+
+The intended flow is simple:
+
+1. copy the three files into your own repo or prompt workspace
+2. attach them to your coding agent
+3. ask the agent to build the first small gateway
+4. validate it in Atlas
 
 ## What the internal coding agent should build
 
@@ -51,6 +64,14 @@ Ask for:
 - curl examples
 - tests for the manifest and invoke paths
 
+In practice, the first good output is usually:
+
+- a tiny FastAPI, Express, or similar HTTP service
+- one real internal action, not a mock action
+- clean bearer auth
+- one manifest test and one invoke test
+- curl commands that a human can run without guessing
+
 ## What not to ask it for first
 
 Avoid asking the first version to:
@@ -61,6 +82,8 @@ Avoid asking the first version to:
 - add continuous background behavior
 
 Start with a narrow contract that Atlas can validate and call cleanly.
+
+If your internal coding agent starts dumping too many actions into the manifest, reset the scope and ask for a smaller first version.
 
 ## Recommended prompt
 
