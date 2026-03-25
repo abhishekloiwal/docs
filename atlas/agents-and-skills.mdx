@@ -3,7 +3,7 @@ title: "Agents And Skills"
 description: "How Atlas agents, Atlas skills, and customer gateway actions fit together."
 ---
 
-## The clean split
+## The split
 
 There are three different things in the product, and they should stay separate.
 
@@ -63,8 +63,6 @@ Then Atlas does two different things:
 
 Atlas uses progressive disclosure for skills.
 
-That means:
-
 - the worker injects skill metadata first
 - the full `SKILL.md` body is not injected up front
 - realtime or brain can call `load_attached_skill(...)` when a skill is clearly relevant
@@ -96,12 +94,8 @@ Use both.
 - skills and prompts are soft guidance
   - they shape how the agent behaves and when it uses the tools it can see
 
-## Recommended starting point
+## Setup order
 
-For a new workspace:
+For first-time setup, use [Dashboard Setup](/atlas/dashboard-setup).
 
-1. connect one gateway
-2. create one or two useful skills
-3. attach those skills to the default Atlas agent
-4. allow only the smallest useful set of gateway actions
-5. test in a real meeting
+This page is about the split between agents, skills, and gateway actions.

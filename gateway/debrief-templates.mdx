@@ -3,9 +3,7 @@ title: Debrief Templates
 description: Reusable Atlas debrief templates with full JSON examples and practical guidance for gateway builders.
 ---
 
-## What this page is for
-
-Use this page when you already understand the debrief contract shape and want:
+## Use this page when you want
 
 - reusable starting points
 - full JSON examples
@@ -212,37 +210,24 @@ Full JSON contract example:
 
 ## Eval debrief
 
-Use this when the workflow produced:
+This one works best when the result is operational and the next fixes are fairly clear.
+
+Use it when the workflow produced:
 
 - pass/fail or scoring data
 - clear failure clusters
 - actionable fixes
 
-Recommended shape:
+The page flow is usually:
 
 1. overview
 2. score distribution
 3. failure clusters
 4. recommended fixes
 
-Keep the speech focused on:
+Keep the speech tight. The reader mainly needs the topline result, the weak categories, and the first fix. The canvas can carry the score view and the cluster summary.
 
-- the topline result
-- what categories are soft
-- what to fix first
-
-Keep the canvas focused on:
-
-- KPI cards
-- one score chart
-- one cluster table
-- one next-steps page
-
-Avoid:
-
-- raw test logs
-- every failing sample
-- repeating the full report in both speech and canvas
+Avoid raw logs, every failing sample, or the full report repeated twice.
 
 Full JSON contract example:
 
@@ -315,7 +300,7 @@ Full JSON contract example:
 }
 ```
 
-## Minimal starter shapes
+## Starter shapes
 
 You do not need a giant payload to make these useful.
 

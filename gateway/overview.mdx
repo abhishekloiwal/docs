@@ -3,11 +3,9 @@ title: Gateway Overview
 description: What the customer gateway is, why it exists, and what Atlas expects from it.
 ---
 
-## What the gateway is
+## The boundary
 
 The gateway is the customer-owned bridge between Atlas and the customer’s private systems.
-
-Its job is simple:
 
 - expose actions
 - keep secrets and business logic on the customer side
@@ -25,7 +23,7 @@ The gateway keeps the contract clean:
 - the gateway decides how to execute it
 - the customer keeps control
 
-## What can sit behind the gateway
+## What can sit behind it
 
 - internal REST APIs
 - webhooks
@@ -35,7 +33,7 @@ The gateway keeps the contract clean:
 - OpenClaw-style capability layers
 - data stores and search layers
 
-## What Atlas actually sees
+## What Atlas sees
 
 Atlas does not need to know what runtime is behind the gateway.
 
@@ -53,19 +51,6 @@ Separately, when external work completes, a gateway or downstream workflow can a
 Today, the clean model is one gateway per workspace.
 
 That gateway can expose many actions. Atlas agents then get different subsets of those actions.
-
-## What belongs behind the gateway
-
-You can put almost anything behind this boundary:
-
-- internal REST APIs
-- internal search or document systems
-- workflow engines
-- internal agents
-- OpenClaw-like capability layers
-- MCP-backed tooling
-
-Atlas does not need to know the implementation details. It only needs a clean action contract.
 
 ## Good action design
 
@@ -97,7 +82,7 @@ Optional:
 - async callbacks
 - approval flows
 
-## What the gateway is not
+## What it is not
 
 Gateway actions are not Atlas skills.
 
