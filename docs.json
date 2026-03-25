@@ -3,11 +3,6 @@
   "theme": "mint",
   "name": "Atlas Docs",
   "description": "Use hosted Atlas with your own agents, skills, and customer-owned gateway.",
-  "logo": {
-    "light": "/atlas-docs-wordmark.svg",
-    "dark": "/atlas-docs-wordmark.svg"
-  },
-  "favicon": "/apple-touch-icon.svg",
   "seo": {
     "metatags": {
       "canonical": "https://docs.atlasmeets.com"
@@ -17,12 +12,6 @@
     "primary": "#0E7A55",
     "light": "#E9F7F1",
     "dark": "#0B1F18"
-  },
-  "background": {
-    "color": {
-      "light": "#F5F5F0",
-      "dark": "#0B1F18"
-    }
   },
   "styling": {
     "eyebrows": "breadcrumbs"
@@ -51,8 +40,14 @@
             "pages": [
               "gateway/overview",
               "gateway/build-with-an-agent",
-              "gateway/debrief-contracts",
-              "gateway/mock-gateway"
+              {
+                "group": "Debrief Contracts",
+                "root": "gateway/debrief-contracts",
+                "expanded": true,
+                "pages": [
+                  "gateway/debrief-templates"
+                ]
+              }
             ]
           },
           {
