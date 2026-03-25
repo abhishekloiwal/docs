@@ -132,6 +132,30 @@ Good first rules for an internal coding agent:
   - one or more `sections`
   - and only add canvas pages when you have something genuinely visual to show
 
+## Page grounding
+
+Each `canvas.pages[]` item can also include optional `grounding`.
+
+Use it for small factual support that helps Atlas understand the current page better without reading all of it aloud.
+
+Good grounding fields:
+
+- `summaryText`
+- `source`
+- `chartType`
+- `labels`
+- `values`
+
+Keep grounding concise:
+
+- short factual summary, not another paragraph dump
+- small lists of labels or values, not the full dataset
+- enough detail to support follow-up questions about the current page
+
+Do not use grounding as a hidden second report.
+
+If you already have a large body of source material, keep the debrief itself light and let Atlas fetch fresh detail through gateway tools when the room asks.
+
 ## Canvas guidance
 
 Send the smallest canvas that still makes the point clearly.
