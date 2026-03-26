@@ -13,6 +13,29 @@ Keep these as templates, not rigid scripts.
 
 Where a page has `grounding`, keep it tight. Use short facts, source labels, and compact chart context rather than hidden report dumps.
 
+If a debrief should only reach some stakeholders, keep the contract the same and add audience targeting on the outer synced debrief item.
+
+Example:
+
+```json
+{
+  "externalId": "support_weekly_123",
+  "title": "Support Weekly Brief",
+  "summary": "Queue health and escalation risk for support leads.",
+  "status": "ready",
+  "audience": {
+    "type": "groups",
+    "groupSlugs": ["support-leads"]
+  },
+  "contract": {
+    "version": "atlas-debrief-v1",
+    "title": "Support Weekly Brief"
+  }
+}
+```
+
+Use `userEmails` when the debrief is for named people, and `groupSlugs` when it is for a lightweight stakeholder group inside the org.
+
 ## Monday morning brief
 
 Use this when the gateway has a good sense of:

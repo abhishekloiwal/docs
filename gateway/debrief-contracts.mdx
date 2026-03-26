@@ -49,6 +49,10 @@ The easiest response shape is:
         "title": "Braintrust Eval Debrief",
         "summary": "Latest eval results with score breakdown and next steps.",
         "status": "ready",
+        "audience": {
+          "type": "groups",
+          "groupSlugs": ["support-leads"]
+        },
         "contract": {
           "version": "atlas-debrief-v1",
           "title": "Braintrust Eval Debrief",
@@ -90,6 +94,13 @@ If you hand this page to an internal coding agent, the practical guidance is:
 - `status`
   - usually just `ready`
   - Atlas currently expects ready-to-present debriefs here
+- `audience`
+  - optional lightweight targeting for who should see this debrief in the org
+  - default is `all`
+  - recommended shape:
+    - `{"type":"all"}`
+    - `{"type":"users","userEmails":["a@company.com"]}`
+    - `{"type":"groups","groupSlugs":["recruiting-leads"]}`
 - `contract.version`
   - use `atlas-debrief-v1`
 - `contract.title`
@@ -131,6 +142,64 @@ Good first rules for an internal coding agent:
   - one `summary`
   - one or more `sections`
   - and only add canvas pages when you have something genuinely visual to show
+
+## Debrief audience
+
+Atlas supports lightweight audience targeting on synced debriefs.
+
+Use this when a gateway should only surface a debrief to:
+
+- everyone in the org
+- specific users
+- specific stakeholder groups
+
+Recommended shape on the top-level debrief item:
+
+```json
+{
+  "externalId": "recruiting_weekly_123",
+  "title": "Recruiting Weekly Brief",
+  "summary": "Hiring pipeline update for recruiting leads.",
+  "status": "ready",
+  "audience": {
+    "type": "groups",
+    "groupSlugs": ["recruiting-leads"]
+  },
+  "contract": {
+    "version": "atlas-debrief-v1",
+    "title": "Recruiting Weekly Brief"
+  }
+}
+```
+
+For named people, use:
+
+```json
+{
+  "audience": {
+    "type": "users",
+    "userEmails": ["a@company.com", "b@company.com"]
+  }
+}
+```
+
+Notes:
+
+- if you omit `audience`, Atlas treats the debrief as `all`
+- keep this lightweight; Atlas is not meant to be a deep enterprise policy engine
+- group slugs should match the org groups defined in Atlas workspace settings
+- the gateway suggests the intended audience, and Atlas stores and lightly enforces it in the dashboard
+
+Atlas also accepts a few aliases for compatibility, including:
+
+- `targetUsers`
+- `targetGroups`
+- `stakeholderEmails`
+- `stakeholderGroups`
+- `stakeholders`
+- `contract.metadata.audience`
+
+But if you are building a new gateway, prefer the explicit top-level `audience` object.
 
 ## Page grounding
 
