@@ -56,6 +56,25 @@ When a meeting starts, the worker loads:
 
 So the dashboard is not just an admin UI. It is the source of truth for the hosted worker.
 
+## Meeting assistant scope
+
+Before a meeting starts, Atlas can join in one of two listening modes:
+
+- `Room` (default)
+  - Atlas listens to the shared meeting audio
+  - use this for normal multi-participant meetings
+- `Private to host`
+  - Atlas listens only to the meeting host
+  - use this when one person wants Atlas as a private assistant inside a larger room
+
+This setting is chosen at meeting start time.
+
+It is a meeting-level runtime choice, not a separate agent type.
+
+Recommended default:
+
+- use `Room` unless you explicitly want host-only listening
+
 ## Hosted canary setup
 
 If you are testing Atlas with a hosted worker, the gateway must be reachable from the public internet or private ingress you control.
