@@ -1,0 +1,231 @@
+---
+title: "Workspace API"
+description: "Use one Atlas workspace key to manage shared skills, shared agents, and debriefs directly inside hosted Atlas."
+---
+
+## What it is
+
+This is the Atlas-side automation surface.
+
+Use it when a trusted internal agent or workflow should push shared workspace content directly into Atlas instead of exposing a live customer gateway.
+
+Common uses:
+
+- keep shared skills in sync from an internal repo
+- let Claude Code or another trusted agent update shared agents
+- push debriefs into the workspace after a workflow completes
+
+This is a different path from the Gateway contract:
+
+- use the **Gateway** when Atlas should call your tools during a meeting
+- use the **Workspace API** when your trusted automation should write into Atlas directly
+
+## Auth
+
+Atlas uses one org-level key per workspace.
+
+Send it as a bearer token:
+
+```http
+Authorization: Bearer atlas_org_...
+```
+
+The workspace is derived from the key itself.
+
+Do not send `organizationId` in the request body.
+
+Treat this key like a trusted workspace-admin secret.
+
+## Current v1 scope
+
+This first version manages shared workspace content only:
+
+- shared skills
+- shared agents
+- debrief upserts
+
+It does **not** manage:
+
+- private user skills
+- members, groups, or invites
+- meetings or transcript data
+
+## Base URL
+
+For hosted Atlas:
+
+```text
+https://app.atlasmeets.com/api/v1/org
+```
+
+## Routes
+
+### Skills
+
+```text
+GET    /api/v1/org/skills
+POST   /api/v1/org/skills
+DELETE /api/v1/org/skills/:slug
+```
+
+`POST /skills` is an upsert keyed by `slug`.
+
+### Agents
+
+```text
+GET    /api/v1/org/agents
+POST   /api/v1/org/agents
+DELETE /api/v1/org/agents/:slug
+```
+
+`POST /agents` is an upsert keyed by `slug`.
+
+### Debriefs
+
+```text
+GET  /api/v1/org/debriefs
+POST /api/v1/org/debriefs
+```
+
+`POST /debriefs` is an upsert keyed by `externalId`.
+
+There is no public debrief delete route in v1 yet.
+
+Dashboard dismiss is a local Atlas visibility action, not a hard delete. The debrief row still exists in Atlas storage unless it is explicitly removed later by product logic.
+
+## Shared skill example
+
+```bash
+curl -X POST https://app.atlasmeets.com/api/v1/org/skills \
+  -H "Authorization: Bearer atlas_org_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Client Onboarding Notes",
+    "slug": "client-onboarding-notes",
+    "description": "Turns messy onboarding conversation into clean notes and follow-ups.",
+    "instructions": "Listen for onboarding details, summarize commitments, and call out missing fields cleanly.",
+    "targets": ["realtime", "brain"],
+    "status": "active"
+  }'
+```
+
+Expected fields:
+
+- `name`
+- `slug` or Atlas will derive one from `name`
+- `instructions`
+
+Optional fields:
+
+- `description`
+- `targets`
+- `status`
+
+## Shared agent example
+
+```bash
+curl -X POST https://app.atlasmeets.com/api/v1/org/agents \
+  -H "Authorization: Bearer atlas_org_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Client Onboarding Agent",
+    "slug": "client-onboarding-agent",
+    "description": "Shared onboarding operator for customer setup calls.",
+    "basePersonaId": "atlas-nova",
+    "status": "active",
+    "gatewayAccessMode": "all",
+    "selectedSkillSlugs": ["client-onboarding-notes"]
+  }'
+```
+
+Useful fields:
+
+- `basePersonaId`
+  - `atlas-nova`
+  - `atlas-classic`
+- `gatewayAccessMode`
+  - `all`
+  - `subset`
+- `allowedActionIds`
+  - only used when `gatewayAccessMode` is `subset`
+- `selectedSkillSlugs`
+
+## Debrief upsert example
+
+```bash
+curl -X POST https://app.atlasmeets.com/api/v1/org/debriefs \
+  -H "Authorization: Bearer atlas_org_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "externalId": "candidate-one-pager-2026-03-29",
+    "source": "internal_ops_agent",
+    "title": "Candidate One-Pager",
+    "summary": "A short hiring debrief for the recruiting leads.",
+    "status": "ready",
+    "audience": {
+      "type": "groups",
+      "groupSlugs": ["recruiting"]
+    },
+    "contract": {
+      "version": "atlas-debrief-v1",
+      "title": "Candidate One-Pager",
+      "summary": "A short hiring debrief for the recruiting leads.",
+      "atlas": {
+        "openingSpeech": "I pulled together a short candidate debrief.",
+        "instructions": "Lead with the recommendation, then the strongest evidence.",
+        "delivery": "manual"
+      },
+      "canvas": {
+        "title": "Candidate One-Pager",
+        "deliveryMode": "replace",
+        "pages": [
+          {
+            "title": "Recommendation",
+            "html": "<div><h1>Strong yes</h1><p>Strong technical depth, some communication risk.</p></div>",
+            "speech": "The short version is a strong yes with one communication risk to watch."
+          }
+        ]
+      },
+      "sections": [
+        {
+          "title": "Recommendation",
+          "speech": "The short version is a strong yes with one communication risk to watch.",
+          "pageIndex": 0,
+          "delivery": "wait_for_prompt"
+        }
+      ],
+      "actions": {
+        "speakToRoom": true,
+        "openCanvas": true
+      }
+    }
+  }'
+```
+
+Important details:
+
+- `externalId` is required and should stay stable for updates
+- `audience` is optional
+- the contract must pass the normal Atlas debrief validation
+
+## When to use this instead of a gateway
+
+Use the Workspace API when:
+
+- the work already happened elsewhere
+- your agent just needs to push a clean result into Atlas
+- you want a trusted repo or internal tool to manage shared workspace state
+
+Use a Gateway when:
+
+- Atlas should call your tools live during the meeting
+- Atlas needs action schemas, approvals, async jobs, or manifest-discovered tools
+
+## Good automation behavior
+
+If you point another coding agent at this API, ask it to:
+
+- update by stable `slug` or `externalId`
+- keep shared content clean and intentional
+- avoid creating many overlapping shared agents or skills
+- treat debriefs like presentations, not raw reports

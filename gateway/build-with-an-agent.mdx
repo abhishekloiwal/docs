@@ -125,3 +125,15 @@ Once the gateway exists:
 2. run the built-in sync check
 3. run async and approval checks if you support them
 4. test it in a real meeting
+
+## If you do not need a live gateway
+
+Some teams do not want Atlas to call tools during the meeting at all.
+
+In that case, use the [Workspace API](/atlas/workspace-api) instead:
+
+- your trusted internal agent can push shared skills into Atlas
+- it can update shared agents
+- it can upsert debriefs directly into the workspace
+
+That is the better fit when the work already happened elsewhere and Atlas just needs the clean result.

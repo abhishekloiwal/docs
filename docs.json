@@ -27,6 +27,7 @@
               "index",
               "atlas/dashboard-setup",
               "atlas/agents-and-skills",
+              "atlas/workspace-api",
               "atlas/deployment-modes"
             ]
           }
