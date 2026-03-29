@@ -84,6 +84,7 @@ DELETE /api/v1/org/agents/:slug
 
 ```text
 GET  /api/v1/org/debriefs
+GET  /api/v1/org/debriefs/:externalId
 POST /api/v1/org/debriefs
 ```
 
@@ -208,6 +209,22 @@ Important details:
 - `audience` is optional
 - the contract must pass the normal Atlas debrief validation
 
+## Debrief verification
+
+`POST /debriefs` returns the saved debrief object, including the stable `externalId` Atlas stored.
+
+You can then verify it with either:
+
+- `GET /api/v1/org/debriefs/:externalId`
+- `GET /api/v1/org/debriefs`
+
+Example:
+
+```bash
+curl https://app.atlasmeets.com/api/v1/org/debriefs/candidate-one-pager-2026-03-29 \
+  -H "Authorization: Bearer atlas_org_..."
+```
+
 ## When to use this instead of a gateway
 
 Use the Workspace API when:
@@ -220,6 +237,12 @@ Use a Gateway when:
 
 - Atlas should call your tools live during the meeting
 - Atlas needs action schemas, approvals, async jobs, or manifest-discovered tools
+
+For debrief delivery specifically:
+
+- new builds should prefer the Workspace API push path
+- the older gateway-fed debrief sync path is still supported for compatibility
+- the contract and templates stay the same either way
 
 ## Good automation behavior
 

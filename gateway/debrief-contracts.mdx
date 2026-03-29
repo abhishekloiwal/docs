@@ -16,7 +16,22 @@ This is useful when work finishes outside the room and Atlas should later:
 
 Think of it as a presentation plan, not a rigid script.
 
-## Sync model
+## Recommended delivery model
+
+For new builds, prefer pushing debriefs into Atlas through the [Workspace API](/atlas/workspace-api).
+
+That keeps the flow explicit:
+
+1. your trusted agent or workflow finishes the work
+2. it upserts the debrief into Atlas by `externalId`
+3. Atlas stores it immediately and can present it later
+4. the same client can verify it with a `GET` or a full list call
+
+Use the gateway-fed sync model below only when you already have an older integration that exposes debriefs from a gateway manifest action.
+
+The contract itself stays the same either way.
+
+## Legacy gateway sync model
 
 Atlas does **not** expect the customer gateway to write directly into Supabase.
 
