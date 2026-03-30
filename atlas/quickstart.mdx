@@ -1,0 +1,97 @@
+---
+title: "Quickstart"
+description: "Start with meetings, then let your own agents write into Atlas, then connect a live gateway when you need live tool calls."
+---
+
+## The shortest path to value
+
+Most teams do not need the full gateway on day one.
+
+The practical rollout looks like this:
+
+### 1. Start with meetings
+
+Use Atlas as the meeting agent first.
+
+That gets your team comfortable with:
+
+- a live agent in the room
+- generic meeting help
+- shared canvas output
+- built-in meeting recap and history
+
+### 2. Bring your own internal agents
+
+Once meetings feel natural, let your own internal agent write into Atlas through the [Workspace API](/atlas/workspace-api).
+
+That is a clean fit for:
+
+- Claude Code
+- Codex
+- Cursor-based internal agents
+- OpenClaw-style local agents
+- your own internal automation
+
+Those agents can use their own prompts, skills, and repo context to:
+
+- keep shared skills in sync
+- update shared agents
+- create debriefs and publish them into Atlas with the workspace key
+
+### 3. Connect the gateway
+
+Connect a live gateway when you want Atlas to call your tools during the meeting.
+
+That is the right step when Atlas should:
+
+- query private systems live
+- run approvals or async jobs
+- call workflows while the meeting continues
+
+## Which path should I use?
+
+Use the [Workspace API](/atlas/workspace-api) when:
+
+- the work already happened elsewhere
+- your own agent already knows what to write
+- Atlas just needs the clean result
+
+Use the [Gateway](/gateway/overview) when:
+
+- Atlas should call tools live in the room
+- Atlas needs action schemas, approvals, or job state
+- the meeting itself is the place where the tool call should happen
+
+## First success in one session
+
+If you want a clean first run:
+
+1. sign in and open the Atlas dashboard
+2. start one meeting with a built-in agent
+3. get comfortable with the recap, transcript, and canvas history
+4. generate a workspace API key
+5. ask Claude Code, Codex, or your own internal agent to upsert one debrief through the [Workspace API](/atlas/workspace-api)
+6. only then wire a live gateway
+
+If you already know you want a live gateway first, go to [Dashboard Setup](/atlas/dashboard-setup).
+
+## What coding agents should read
+
+If you are pointing a coding agent at Atlas, the clean reading order is:
+
+1. this page
+2. [Workspace API](/atlas/workspace-api)
+3. [Build With An Agent](/gateway/build-with-an-agent)
+4. [Debrief Templates](/gateway/debrief-templates)
+
+That gives the agent the product model first, then the write path, then the live gateway contract.
+
+## What is coming next
+
+The near-term direction is straightforward:
+
+- better built-in post-call work, starting with cleaner recap and artifact flows
+- smoother setup paths for teams that want to get value before they wire a full gateway
+- more guided gateway setup for common internal agent runtimes and enterprise deployment patterns where demand is clear
+
+Over time, we also expect to add more opinionated, one-click gateway starters for common setups, including OpenClaw-style local agents, personal agent deployments, and enterprise-specific environments where that support meaningfully reduces setup time.

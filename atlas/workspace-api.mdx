@@ -20,6 +20,38 @@ This is a different path from the Gateway contract:
 - use the **Gateway** when Atlas should call your tools during a meeting
 - use the **Workspace API** when your trusted automation should write into Atlas directly
 
+For most teams, this is the second step after they are already comfortable using Atlas in meetings. The common rollout is:
+
+1. use Atlas in meetings first
+2. let your own agent publish into Atlas through this API
+3. connect the live gateway later when Atlas should call tools during the meeting
+
+## Using Claude Code, Codex, or your own internal agent
+
+This API is a good fit when you already have an internal agent that knows how to do the work.
+
+That might be:
+
+- Claude Code
+- Codex
+- Cursor-based internal agents
+- OpenClaw-style local agents
+- your own internal automation
+
+The important part is the split:
+
+- your agent can use its own prompts, repo context, and internal skills to do the work
+- Atlas is the place where the shared result gets published and presented
+
+In practice, that means your internal agent can:
+
+- generate or update shared Atlas skills
+- update shared Atlas agents
+- create debrief payloads and upsert them with the workspace key
+- verify the result with `GET /debriefs` or `GET /debriefs/:externalId`
+
+This is usually the cleanest way to let Claude Code, Codex, or another trusted agent create debriefs for Atlas without forcing Atlas to call those tools live during the meeting.
+
 ## Auth
 
 Atlas uses one org-level key per workspace.
@@ -252,3 +284,9 @@ If you point another coding agent at this API, ask it to:
 - keep shared content clean and intentional
 - avoid creating many overlapping shared agents or skills
 - treat debriefs like presentations, not raw reports
+
+## Related reading
+
+- [Quickstart](/atlas/quickstart)
+- [Build With An Agent](/gateway/build-with-an-agent)
+- [Debrief Templates](/gateway/debrief-templates)
